@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Signal Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    button { margin-right: 5px; padding: 5px 10px; cursor: pointer; border: 2px solid #ccc; border-radius: 5px; }
+    button.active { background-color: #007bff; color: #fff; border-color: #0056b3; }
+    button:hover { background-color: #f0f0f0; }
+    input[type="number"], input[type="date"], select {
+      padding: 5px; margin-top: 5px; width: 150px;
+    }
+    .preview { margin-top: 20px; font-weight: bold; }
+    .copy-btn { margin-top: 10px; padding: 5px 10px; cursor: pointer; background-color: #007bff; color: #fff; border: none; border-radius: 5px; }
+    .copy-btn:hover { background-color: #0056b3; }
+  </style>
+</head>
+<body>
+  <h2>Signal Generator</h2>
+  
+
+  <div class="form-group">
+    <label>Quantity:</label>
+    <div id="quantity-buttons">
+      <button onclick="setQuantity(1)">1x</button>
+      <button onclick="setQuantity(2)">2x</button>
+      <button onclick="setQuantity(4)">4x</button>
+      <button onclick="showCustomQuantity()">Other</button>
+    </div>
+    <input type="number" id="custom-quantity" style="display: none;" min="1" placeholder="Enter custom quantity" onchange="setCustomQuantity()">
+  </div>
+  
+
+  <div class="form-group">
+    <label for="ticker">Ticker:</label>
+    <select id="ticker">
+      <option value="SPY">SPY</option>
+      <option value="AAPL">AAPL</option>
+      <option value="TSLA">TSLA</option>
+      <option value="NVDA">NVDA</option>
+      <option value="QQQ">QQQ</option>
+      <option value="MSTR">MSTR</option>
+      <option value="SPX">SPX</option>
+      <option value="PLTR">PLTR</option>
+    </select>
+  </div>
+  
+
+  <div class="form-group">
+    <label for="strike">Strike Price:</label>
+    <input type="number" id="strike" placeholder="590">
+  </div>
+  
+
+  <div class="form-group">
+    <label>Option Type:</label>
+    <button id="call-btn" onclick="setType('Call')" class="option-btn">Call</button>
+    <button id="put-btn" onclick="setType('Put')" class="option-btn">Put</button>
+  </div>
+  
+
+  <div class="form-group">
+    <label for="expiration">Expiration Date:</label>
+    <input type="date" id="expiration">
+  </div>
+  
+
+  <div class="form-group">
+    <label for="price">Price:</label>
+    <input type="number" step="0.01" id="price" placeholder="1.51">
+  </div>
+  
+
+  <div class="form-group">
+    <button onclick="generateSignal()">Generate Signal</button>
+  </div>
+  
+
+  <div class="preview" id="preview"></div>
+  <button class="copy-btn" id="copy-button" style="display: none;" onclick="copyToClipboard()">Copy to Clipboard</button>
+
+  <script>
+    let quantity = 1; 
+    let optionType = 'Call'; 
+
+
+    function setQuantity(value) {
+      quantity = value;
+      document.getElementById('custom-quantity').style.display = 'none';
+      console.log(`Selected quantity: ${quantity}`);
+    }
+
+
+    function showCustomQuantity() {
+      document.getElementById('custom-quantity').style.display = 'inline-block';
+    }
+
+
+    function setCustomQuantity() {
+      const customValue = document.getElementById('custom-quantity').value;
+      if (customValue) {
+        quantity = customValue;
+        console.log(`Custom quantity set: ${quantity}`);
+      }
+    }
+
+
+    function setType(type) {
+      optionType = type;
+      console.log(`Selected option type: ${optionType}`);
+      
+
+      const callBtn = document.getElementById('call-btn');
+      const putBtn = document.getElementById('put-btn');
+      
+      if (type === 'Call') {
+        callBtn.classList.add('active');
+        putBtn.classList.remove('active');
+      } else if (type === 'Put') {
+        putBtn.classList.add('active');
+        callBtn.classList.remove('active');
+      }
+    }
+
+
+    function generateSignal() {
+      const ticker = document.getElementById('ticker').value;
+      const strike = document.getElementById('strike').value;
+      const expiration = document.getElementById('expiration').value;
+      const price = document.getElementById('price').value;
+      
+
+      const formattedExpiration = formatDate(expiration);
+      
+      const signal = `${quantity}x ${ticker} ${strike} ${optionType} ${formattedExpiration} @ ${price}`;
+      document.getElementById('preview').innerText = `Signal: ${signal}`;
+      
+
+      const copyButton = document.getElementById('copy-button');
+      copyButton.style.display = 'inline-block';
+    }
+
+
+    function formatDate(dateString) {
+      if (!dateString) return ""; 
+      const date = new Date(dateString);
+      const month = date.getMonth() + 1;
+      const day = date.getDate() + 1;
+      return `${month}/${day}`;
+    }
+
+
+    function copyToClipboard() {
+      const signalText = document.getElementById('preview').innerText.replace('Signal: ', '');
+      navigator.clipboard.writeText(signalText);
+    }
+  </script>
+</body>
+</html>
