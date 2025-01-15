@@ -134,8 +134,13 @@
 
       const formattedExpiration = formatDate(expiration);
       
-      const signal = `${quantity}x ${ticker} ${strike} ${optionType} ${formattedExpiration} @ ${price}`;
-      document.getElementById('preview').innerText = `Signal: ${signal}`;
+      const signal = `Ticker: ${ticker}\n 
+                      Strike: ${strike}\n
+                      Option Type: ${optionType}\n
+                      Contract #: ${quantity}x\n 
+                      Expiration: ${formattedExpiration}\n
+                      Entry: ${price}`;
+      document.getElementById('preview').innerText = `Signal:\n\n ${signal}`;
       
 
       const copyButton = document.getElementById('copy-button');
